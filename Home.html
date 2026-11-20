@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MySchool | Admin Platform</title>
+  <link rel="stylesheet" href="home.css" />
+  <!-- Boxicons CDN -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+</head>
+<body>
+  <div class="ambient-orb orb-1"></div>
+  <div class="ambient-orb orb-2"></div>
+
+  <div class="app-container">
+    <!-- Left Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-logo" id="brandLogo">
+        <span class="brand-dot"></span>
+        <span id="schoolBrandText">MySchool</span>
+      </div>
+
+      <nav class="nav-group">
+        <a class="nav-item active" data-view="dashboard" data-title="DASHBOARD" data-sub="Overview of school performance, class results, and quick admin actions.">
+          <i class='bx bx-grid-alt'></i>
+          <span>Dashboard</span>
+        </a>
+        <a class="nav-item" data-view="students" data-title="STUDENTS" data-sub="Manage student enrollments, subject potential shapes, and exam notes.">
+          <i class='bx bxs-graduation'></i>
+          <span>Students</span>
+        </a>
+        <a class="nav-item" data-view="teachers" data-title="TEACHERS" data-sub="Manage faculty members, single-subject specialties, and assigned classes.">
+          <i class='bx bx-glasses-alt'></i>
+          <span>Teachers</span>
+        </a>
+        <a class="nav-item" data-view="classes" data-title="CLASSES" data-sub="Manage academic classes and color-coded weekly schedules.">
+          <i class='bx bx-buildings'></i>
+          <span>Classes</span>
+        </a>
+        <a class="nav-item" data-view="subjects" data-title="SUBJECTS" data-sub="Curriculum subject registry (ID, Name, and Code).">
+          <i class='bx bx-book-bookmark'></i>
+          <span>Subjects</span>
+        </a>
+      </nav>
+
+      <hr class="sidebar-divider" />
+
+      <nav class="nav-group">
+        <a class="nav-item" data-view="profile" data-title="PROFILE" data-sub="Administrator account profile and security preferences.">
+          <i class='bx bx-user'></i>
+          <span>Profile</span>
+        </a>
+        <a class="nav-item" data-view="settings" data-title="SETTINGS" data-sub="Customize glass theme, school name, and academic settings.">
+          <i class='bx bx-cog'></i>
+          <span>Settings</span>
+        </a>
+        <a class="nav-item" id="logoutBtn">
+          <i class='bx bx-log-out'></i>
+          <span>Log out</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Right Workspace -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">
+            <i class='bx bx-menu'></i>
+          </button>
+          <span class="current-date" id="headerDate">
+            <i class='bx bx-calendar' style="color: var(--light-blue);"></i>
+            November 15, 2026
+          </span>
+        </div>
+
+        <div class="topbar-actions">
+          <button type="button" class="icon-btn" id="notifBtn" title="Notifications">
+            <i class='bx bx-bell'></i>
+            <span class="notif-dot" id="notifDot"></span>
+          </button>
+
+          <button type="button" class="icon-btn" id="langBtn" title="Switch Language (EN / FR)">
+            <i class='bx bx-globe'></i>
+          </button>
+
+          <button type="button" class="icon-btn" id="themeToggleBtn" title="Toggle Dark / Light Glass">
+            <i class='bx bx-sun' id="themeIcon"></i>
+          </button>
+
+          <div class="user-profile-badge" id="userBadge">
+            <span class="badge-avatar" id="headerAvatar">YT</span>
+            <span id="headerAdminName">Yassine Talbi</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="content-area">
+        <div class="page-header">
+          <div>
+            <h1 id="pageTitle">DASHBOARD</h1>
+            <p id="pageSubtitle">Overview of school performance, class results, and quick admin actions.</p>
+          </div>
+        </div>
+
+        <!-- ==================== 1. DASHBOARD VIEW ==================== -->
+        <div class="view-section active" id="view-dashboard">
+          <!-- 4 KPI Grids -->
+          <section class="stats-grid">
+            <div class="stat-card">
+              <div>
+                <span class="stat-title">Total Students</span>
+                <h2 class="stat-value" id="dashTotalStudents">6</h2>
+                <span class="stat-trend accent">Active & Enrolled</span>
+              </div>
+              <div class="stat-icon"><i class='bx bxs-graduation'></i></div>
+            </div>
+
+            <div class="stat-card">
+              <div>
+                <span class="stat-title">Total Teachers</span>
+                <h2 class="stat-value" id="dashTotalTeachers">5</h2>
+                <span class="stat-trend accent">1 Subject / Multi-Class</span>
+              </div>
+              <div class="stat-icon"><i class='bx bx-glasses-alt'></i></div>
+            </div>
+
+            <div class="stat-card">
+              <div>
+                <span class="stat-title">Total Classes</span>
+                <h2 class="stat-value" id="dashTotalClasses">4</h2>
+                <span class="stat-trend accent">With Weekly Planning</span>
+              </div>
+              <div class="stat-icon"><i class='bx bx-buildings'></i></div>
+            </div>
+
+            <div class="stat-card">
+              <div>
+                <span class="stat-title">Total Subjects</span>
+                <h2 class="stat-value" id="dashTotalSubjects">6</h2>
+                <span class="stat-trend accent">Curriculum Registry</span>
+              </div>
+              <div class="stat-icon"><i class='bx bx-book-bookmark'></i></div>
+            </div>
+          </section>
+
+          <!-- Two Asymmetric Grids: Large Geometric Dash + Small Quick Actions Grid -->
+          <section class="dashboard-asymmetric">
+            <!-- Large Grid: Geometric Dash for Classes Average Results -->
+            <div class="glass-panel">
+              <div class="panel-header">
+                <h3><i class='bx bx-shape-circle' style="color: var(--light-blue);"></i> Geometric Dash — Classes Average Results</h3>
+                <span class="accent-pill" id="overallSchoolAvg">School Avg: 15.6 / 20</span>
+              </div>
+              <div class="geo-dash-layout">
+                <div class="svg-stage" id="dashGeoChartStage"></div>
+                <div class="class-avg-list" id="dashClassAvgBars"></div>
+              </div>
+            </div>
+
+            <!-- Small Grid: Quick Admin Actions -->
+            <div class="glass-panel">
+              <div class="panel-header">
+                <h3><i class='bx bx-bolt-circle' style="color: var(--light-blue);"></i> Quick Actions</h3>
+                <span class="accent-pill">Admin Shortcuts</span>
+              </div>
+              <div class="quick-actions-grid">
+                <button type="button" class="quick-action-card" id="qaAddStudent">
+                  <div class="qa-left">
+                    <div class="qa-icon"><i class='bx bx-user-plus'></i></div>
+                    <div class="qa-text">
+                      <strong>Add Student</strong>
+                      <span>Enroll student & assign subjects</span>
+                    </div>
+                  </div>
+                  <i class='bx bx-chevron-right'></i>
+                </button>
+
+                <button type="button" class="quick-action-card" id="qaAddTeacher">
+                  <div class="qa-left">
+                    <div class="qa-icon"><i class='bx bx-id-card'></i></div>
+                    <div class="qa-text">
+                      <strong>Add Teacher</strong>
+                      <span>Assign 1 subject & classes</span>
+                    </div>
+                  </div>
+                  <i class='bx bx-chevron-right'></i>
+                </button>
+
+                <button type="button" class="quick-action-card" id="qaAddClass">
+                  <div class="qa-left">
+                    <div class="qa-icon"><i class='bx bx-calendar-plus'></i></div>
+                    <div class="qa-text">
+                      <strong>Add Class</strong>
+                      <span>Create class & weekly planning</span>
+                    </div>
+                  </div>
+                  <i class='bx bx-chevron-right'></i>
+                </button>
+
+                <button type="button" class="quick-action-card" id="qaAddSubject">
+                  <div class="qa-left">
+                    <div class="qa-icon"><i class='bx bx-book-add'></i></div>
+                    <div class="qa-text">
+                      <strong>Add Subject</strong>
+                      <span>Register ID, name & code</span>
+                    </div>
+                  </div>
+                  <i class='bx bx-chevron-right'></i>
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- ==================== 2. STUDENTS MODULE ==================== -->
+        <div class="view-section" id="view-students">
+          <section class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="stat-card">
+              <div>
+                <span class="stat-title">Total Students</span>
+                <h2 class="stat-value" id="stuStatTotal">6</h2>
+                <span class="stat-trend">All registered records</span>
+              </div>
+              <div class="stat-icon"><i class='bx bxs-graduation'></i></div>
+            </div>
+            <div class="stat-card">
+              <div>
+                <span class="stat-title">Active Students</span>
+                <h2 class="stat-value" id="stuStatActive">5</h2>
+                <span class="stat-trend accent">Enrolled this term</span>
+              </div>
+              <div class="stat-icon"><i class='bx bx-check-circle'></i></div>
+            </div>
+            <div class="stat-card">
+              <div>
+                <span class="stat-title">School Average</span>
+                <h2 class="stat-value" id="stuStatAvg">16.3</h2>
+                <span class="stat-trend accent">Overall exam average</span>
+              </div>
+              <div class="stat-icon"><i class='bx bx-shape-polygon'></i></div>
+            </div>
+          </section>
+
+          <div class="controls-bar">
+            <div class="filter-group">
+              <div class="search-box">
+                <i class='bx bx-search'></i>
+                <input type="text" id="stuSearchInput" placeholder="Search name, ID, or phone..." />
+              </div>
+              <select class="filter-select" id="stuClassFilter">
+                <option value="ALL">All Classes</option>
+              </select>
+              <select class="filter-select" id="stuStatusFilter">
+                <option value="ALL">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
+            <div class="action-group">
+              <div class="view-toggle" title="Default: Grid View">
+                <button type="button" class="active" id="stuGridBtn" title="Grid View"><i class='bx bx-grid-alt'></i></button>
+                <button type="button" id="stuTableBtn" title="Table View"><i class='bx bx-list-ul'></i></button>
+              </div>
+              <button type="button" class="btn-accent" id="stuAddBtn">
+                <i class='bx bx-plus'></i> Add Student
+              </button>
+            </div>
+          </div>
+
+          <!-- Default Grid View -->
+          <section class="cards-grid" id="studentsGridView"></section>
+
+          <!-- Optional Table View -->
+          <section class="glass-panel table-panel" id="studentsTableView" style="display: none;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Student Name</th>
+                  <th>Class</th>
+                  <th>Parent Phone</th>
+                  <th>Subjects</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="studentsTableBody"></tbody>
+            </table>
+          </section>
+        </div>
+
+        <!-- ==================== 3. TEACHERS MODULE ==================== -->
+        <div class="view-section" id="view-teachers">
+          <section class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="stat-card">
+              <div>
+                <span class="stat-title">Total Teachers</span>
+                <h2 class="stat-value" id="tchStatTotal">5</h2>
+                <span class="stat-trend accent">Faculty roster</span>
+              </div>
+              <div class="stat-icon"><i class='bx bx-glasses-alt'></i></div>
+            </div>
+            <div class="stat-card">
+              <div>
+                <span class="stat-title">Active Faculty</span>
+                <h2 class="stat-value" id="tchStatActive">4</h2>
+                <span class="stat-trend">Teaching this term</span>
+              </div>
+              <div class="stat-icon"><i class='bx bx-check-shield'></i></div>
+            </div>
+            <div class="stat-card">
+              <div>
+                <span class="stat-title">Subjects Covered</span>
+                <h2 class="stat-value" id="tchStatSubjects">5</h2>
+                <span class="stat-trend accent">1 Subject per teacher</span>
+              </div>
+              <div class="stat-icon"><i class='bx bx-book-open'></i></div>
+            </div>
+          </section>
+
+          <div class="controls-bar">
+            <div class="filter-group">
+              <div class="search-box">
+                <i class='bx bx-search'></i>
+                <input type="text" id="tchSearchInput" placeholder="Search teacher name or subject..." />
+              </div>
+              <select class="filter-select" id="tchSubjectFilter">
+                <option value="ALL">All Subjects</option>
+              </select>
+              <select class="filter-select" id="tchClassFilter">
+                <option value="ALL">All Assigned Classes</option>
+              </select>
+            </div>
+            <div class="action-group">
+              <div class="view-toggle">
+                <button type="button" class="active" id="tchGridBtn" title="Grid View"><i class='bx bx-grid-alt'></i></button>
+                <button type="button" id="tchTableBtn" title="Table View"><i class='bx bx-list-ul'></i></button>
+              </div>
+              <button type="button" class="btn-accent" id="tchAddBtn">
+                <i class='bx bx-plus'></i> Add Teacher
+              </button>
+            </div>
+          </div>
+
+          <section class="cards-grid" id="teachersGridView"></section>
+
+          <section class="glass-panel table-panel" id="teachersTableView" style="display: none;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Teacher Name</th>
+                  <th>Single Subject</th>
+                  <th>Assigned Classes</th>
+                  <th>Phone</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="teachersTableBody"></tbody>
+            </table>
+          </section>
+        </div>
+
+        <!-- ==================== 4. CLASSES MODULE ==================== -->
+        <div class="view-section" id="view-classes">
+          <section class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
+            <div class="stat-card">
+              <div>
+                <span class="stat-title">Total Classes</span>
+                <h2 class="stat-value" id="clsStatTotal">4</h2>
+                <span class="stat-trend accent">Active sections</span>
+              </div>
+              <div class="stat-icon"><i class='bx bx-buildings'></i></div>
+            </div>
+            <div class="stat-card">
+              <div>
+                <span class="stat-title">School Average</span>
+                <h2 class="stat-value" id="clsStatTopAvg">16.4</h2>
+                <span class="stat-trend accent">Out of 20</span>
+              </div>
+              <div class="stat-icon"><i class='bx bx-shape-polygon'></i></div>
+            </div>
+          </section>
+
+          <div class="controls-bar">
+            <div class="filter-group">
+              <div class="search-box">
+                <i class='bx bx-search'></i>
+                <input type="text" id="clsSearchInput" placeholder="Search class name or grade..." />
+              </div>
+              <select class="filter-select" id="clsGradeFilter">
+                <option value="ALL">All Grades</option>
+                <option value="Grade 10">Grade 10</option>
+                <option value="Grade 11">Grade 11</option>
+                <option value="Grade 12">Grade 12</option>
+              </select>
+            </div>
+            <div class="action-group">
+              <button type="button" class="btn-accent" id="clsAddBtn">
+                <i class='bx bx-plus'></i> Add Class
+              </button>
+            </div>
+          </div>
+
+          <section class="cards-grid" id="classesGridView"></section>
+        </div>
+
+        <!-- ==================== 5. SUBJECTS MODULE (ONLY ID, NAME, CODE) ==================== -->
+        <div class="view-section" id="view-subjects">
+          <div class="controls-bar" style="margin-top: 0;">
+            <div class="filter-group">
+              <div class="search-box">
+                <i class='bx bx-search'></i>
+                <input type="text" id="subSearchInput" placeholder="Search by ID, subject name, or code..." />
+              </div>
+            </div>
+            <div class="action-group">
+              <div class="view-toggle">
+                <button type="button" class="active" id="subGridBtn" title="Grid View"><i class='bx bx-grid-alt'></i></button>
+                <button type="button" id="subTableBtn" title="Table View"><i class='bx bx-list-ul'></i></button>
+              </div>
+              <button type="button" class="btn-accent" id="subAddBtn">
+                <i class='bx bx-plus'></i> Add Subject
+              </button>
+            </div>
+          </div>
+
+          <section class="cards-grid" id="subjectsGridView"></section>
+
+          <section class="glass-panel table-panel" id="subjectsTableView" style="display: none;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Subject Name</th>
+                  <th>Code</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="subjectsTableBody"></tbody>
+            </table>
+          </section>
+        </div>
+
+        <!-- ==================== 6. PROFILE MODULE ==================== -->
+        <div class="view-section" id="view-profile">
+          <div class="two-col-grid">
+            <div class="glass-panel">
+              <div class="panel-header">
+                <h3>Administrator Profile</h3>
+                <span class="accent-pill">Super Admin</span>
+              </div>
+              <form id="profileForm">
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" id="profFirstName" value="Yassine" required />
+                  </div>
+                  <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" id="profLastName" value="Talbi" required />
+                  </div>
+                </div>
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="profEmail" value="yassine.talbi@myschool.edu" required />
+                  </div>
+                  <div class="form-group">
+                    <label>Phone</label>
+                    <input type="text" id="profPhone" value="+212 6 60 00 11 22" required />
+                  </div>
+                </div>
+                <div class="modal-actions">
+                  <button type="submit" class="btn-accent">Save Profile</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="glass-panel">
+              <div class="panel-header">
+                <h3>Security</h3>
+              </div>
+              <form id="passwordForm">
+                <div class="form-group">
+                  <label>Current Password</label>
+                  <input type="password" placeholder="••••••••" required />
+                </div>
+                <div class="form-group">
+                  <label>New Password</label>
+                  <input type="password" placeholder="Minimum 6 characters" minlength="6" required />
+                </div>
+                <button type="submit" class="btn-accent" style="width: 100%; justify-content: center;">Update Password</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== 7. SETTINGS MODULE ==================== -->
+        <div class="view-section" id="view-settings">
+          <div class="two-col-grid">
+            <div class="glass-panel">
+              <div class="panel-header">
+                <h3>School Settings</h3>
+              </div>
+              <form id="settingsForm">
+                <div class="form-group">
+                  <label>Platform Name</label>
+                  <input type="text" id="setSchoolName" value="MySchool" required />
+                </div>
+                <div class="form-group">
+                  <label>Academic Year</label>
+                  <select id="setAcademicYear">
+                    <option value="2026–2027" selected>2026–2027</option>
+                    <option value="2025–2026">2025–2026</option>
+                  </select>
+                </div>
+                <div class="modal-actions">
+                  <button type="submit" class="btn-accent">Apply Settings</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="glass-panel">
+              <div class="panel-header">
+                <h3>Interface Preferences</h3>
+              </div>
+              <div class="setting-row">
+                <div>
+                  <strong style="display:block; font-size:0.9rem;">Light Cyan Glass Theme</strong>
+                  <span style="font-size:0.78rem; color:var(--text-muted);">Toggle between Jet Black slate and Light Cyan glass</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="settingsThemeSwitch" />
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ROOT-LEVEL NOTIFICATION POPOVER (Never trapped under cards) -->
+  <div class="notif-dropdown" id="notifDropdown">
+    <div class="notif-dropdown-header">
+      <strong>Notifications (2)</strong>
+      <button type="button" class="notif-clear-btn" id="markReadBtn">Mark as read</button>
+    </div>
+    <div class="notif-item">
+      <strong>New Student Enrolled</strong>
+      <span>Lina Tazi joined Class 12-A • 12m ago</span>
+    </div>
+    <div class="notif-item">
+      <strong>Class 11-A Planning Updated</strong>
+      <span>Math & PC exam prep slots added • 1h ago</span>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: STUDENT "SEE MORE" (PROFILE + POLYGON POTENTIAL + EXAM NOTES) ==================== -->
+  <div class="modal-backdrop" id="studentSeeMoreModal">
+    <div class="modal-card xlarge">
+      <div class="modal-header">
+        <h3 id="stuDetailModalTitle">Student Profile & Potential</h3>
+        <button type="button" class="close-modal" data-close="studentSeeMoreModal">&times;</button>
+      </div>
+      <div class="student-detail-grid">
+        <!-- Left: Student Profile Info & Geometric Corner Potential Shape -->
+        <div>
+          <div class="profile-box" style="margin-bottom: 16px;" id="stuDetailProfileInfo"></div>
+          <div class="profile-box">
+            <div class="panel-header" style="margin-bottom: 10px;">
+              <h4 style="font-size: 0.92rem;">Geometric Subject Potential</h4>
+              <span class="accent-pill" id="stuCornerCountBadge">4 Corners</span>
+            </div>
+            <p style="font-size: 0.76rem; color: var(--text-muted); margin-bottom: 10px;">
+              Circular radar polygon with vertices matching the student's enrolled subjects.
+            </p>
+            <div class="svg-stage" id="studentPotentialSvgStage"></div>
+          </div>
+        </div>
+
+        <!-- Right: Student Exam Notes Preparation & Live Grading -->
+        <div class="profile-box">
+          <div class="panel-header">
+            <h4 style="font-size: 0.95rem;"><i class='bx bx-edit' style="color:var(--light-blue);"></i> Student Exam Notes</h4>
+            <span class="accent-pill" id="stuOverallAvgBadge">Avg: 16.2/20</span>
+          </div>
+          <p style="font-size: 0.76rem; color: var(--text-muted); margin-bottom: 12px;">
+            Adjust exam scores below to preview live updates on the student's geometric potential shape.
+          </p>
+          <div class="timetable-wrap">
+            <table class="data-table" style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Exam 1</th>
+                  <th>Exam 2</th>
+                  <th>Average</th>
+                </tr>
+              </thead>
+              <tbody id="stuExamNotesBody"></tbody>
+            </table>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-glass" data-close="studentSeeMoreModal">Close</button>
+            <button type="button" class="btn-accent" id="saveExamNotesBtn">
+              <i class='bx bx-check'></i> Save Notes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: CLASS "SEE MORE" (DRAG & DROP WEEKLY PLANNING + CLÉ MOT) ==================== -->
+  <div class="modal-backdrop" id="classPlanningModal">
+    <div class="modal-card xlarge">
+      <div class="modal-header">
+        <h3 id="classPlanModalTitle">Class Weekly Planning</h3>
+        <button type="button" class="close-modal" data-close="classPlanningModal">&times;</button>
+      </div>
+
+      <!-- Draggable Clé Mot (Subject Palette) -->
+      <div class="cle-mot-bar" id="classCleMotBar"></div>
+
+      <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 12px;">
+        <strong>Hold & Drag</strong> any subject chip from the Clé Mot palette above and drop it into any day/time cell (or drag an existing block to move/swap slots). Click <strong>&times;</strong> on a block to clear it.
+      </p>
+
+      <div class="timetable-wrap">
+        <table class="timetable" id="classTimetable"></table>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-glass" id="clearAllPlanningBtn">Clear Schedule</button>
+        <button type="button" class="btn-accent" id="saveClassPlanningBtn">
+          <i class='bx bx-check'></i> Save Planning
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ADD / EDIT STUDENT ==================== -->
+  <div class="modal-backdrop" id="studentFormModal">
+    <div class="modal-card wide">
+      <div class="modal-header">
+        <h3 id="studentFormTitle">Add New Student</h3>
+        <button type="button" class="close-modal" data-close="studentFormModal">&times;</button>
+      </div>
+      <form id="studentForm">
+        <input type="hidden" id="editStudentId" />
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Student Full Name</label>
+            <input type="text" id="stuNameInput" placeholder="e.g., Karim Alaoui" required />
+          </div>
+          <div class="form-group">
+            <label>Class</label>
+            <select id="stuClassInput"></select>
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Parent Phone</label>
+            <input type="text" id="stuPhoneInput" placeholder="+212 6 00 00 00 00" required />
+          </div>
+          <div class="form-group">
+            <label>Enrollment Status</label>
+            <select id="stuStatusInput">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Enrolled Subjects (Determines corners of the Geometric Potential shape — pick at least 3)</label>
+          <div class="checkbox-pills" id="stuSubjectsCheckboxes"></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-glass" data-close="studentFormModal">Cancel</button>
+          <button type="submit" class="btn-accent">Save Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ADD / EDIT TEACHER (1 SUBJECT, MULTI CLASSES, NO SEE MORE) ==================== -->
+  <div class="modal-backdrop" id="teacherFormModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="teacherFormTitle">Add New Teacher</h3>
+        <button type="button" class="close-modal" data-close="teacherFormModal">&times;</button>
+      </div>
+      <form id="teacherForm">
+        <input type="hidden" id="editTeacherId" />
+        <div class="form-group">
+          <label>Teacher Full Name</label>
+          <input type="text" id="tchNameInput" placeholder="e.g., Dr. Nadia Mansouri" required />
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Single Specialty Subject</label>
+            <select id="tchSubjectInput"></select>
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" id="tchPhoneInput" placeholder="+212 6 70 11 22 33" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Assigned Classes (Select multiple classes)</label>
+          <div class="checkbox-pills" id="tchClassesCheckboxes"></div>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="tchStatusInput">
+            <option value="Active">Active</option>
+            <option value="InActive">InActive</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-glass" data-close="teacherFormModal">Cancel</button>
+          <button type="submit" class="btn-accent">Save Teacher</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: CLASS "SEE MORE" (WEEKLY PLANNING + CLÉ MOT) ==================== -->
+  <div class="modal-backdrop" id="classPlanningModal">
+    <div class="modal-card xlarge">
+      <div class="modal-header">
+        <h3 id="classPlanModalTitle">Class Weekly Planning</h3>
+        <button type="button" class="close-modal" data-close="classPlanningModal">&times;</button>
+      </div>
+
+      <!-- Clé Mot (Color Key Legend) -->
+      <div class="cle-mot-bar" id="classCleMotBar"></div>
+
+      <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 10px;">
+        Click any time-slot badge in the timetable to cycle its scheduled subject according to the Clé Mot color key.
+      </p>
+
+      <div class="timetable-wrap">
+        <table class="timetable" id="classTimetable"></table>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-accent" data-close="classPlanningModal">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ADD / EDIT CLASS (NO HOMEROOM TEACHER, NO ROOM NUMBER) ==================== -->
+  <div class="modal-backdrop" id="classFormModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="classFormTitle">Add New Class</h3>
+        <button type="button" class="close-modal" data-close="classFormModal">&times;</button>
+      </div>
+      <form id="classForm">
+        <input type="hidden" id="editClassId" />
+        <div class="form-group">
+          <label>Class Name</label>
+          <input type="text" id="clsNameInput" placeholder="e.g., Class 11-B" required />
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Grade Level</label>
+            <select id="clsGradeInput">
+              <option value="Grade 10">Grade 10</option>
+              <option value="Grade 11">Grade 11</option>
+              <option value="Grade 12">Grade 12</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Class Average Result (/20)</label>
+            <input type="number" step="0.1" min="0" max="20" id="clsAvgInput" value="15.5" required />
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-glass" data-close="classFormModal">Cancel</button>
+          <button type="submit" class="btn-accent">Save Class</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ADD / EDIT SUBJECT (ONLY ID, NAME, CODE) ==================== -->
+  <div class="modal-backdrop" id="subjectFormModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="subjectFormTitle">Add New Subject</h3>
+        <button type="button" class="close-modal" data-close="subjectFormModal">&times;</button>
+      </div>
+      <form id="subjectForm">
+        <input type="hidden" id="editSubjectId" />
+        <div class="form-group">
+          <label>Subject Name</label>
+          <input type="text" id="subNameInput" placeholder="e.g., Mathematics" required />
+        </div>
+        <div class="form-group">
+          <label>Subject Code</label>
+          <input type="text" id="subCodeInput" placeholder="e.g., MATH-101" required />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-glass" data-close="subjectFormModal">Cancel</button>
+          <button type="submit" class="btn-accent">Save Subject</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: DELETE CONFIRMATION ==================== -->
+  <div class="modal-backdrop" id="deleteConfirmModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Confirm Deletion</h3>
+        <button type="button" class="close-modal" data-close="deleteConfirmModal">&times;</button>
+      </div>
+      <p id="deleteConfirmText" style="font-size: 0.9rem; color: var(--text-secondary);">Are you sure you want to delete this record?</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-glass" data-close="deleteConfirmModal">Cancel</button>
+        <button type="button" class="btn-danger" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: LOGOUT CONFIRMATION ==================== -->
+  <div class="modal-backdrop" id="logoutConfirmModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Log Out</h3>
+        <button type="button" class="close-modal" data-close="logoutConfirmModal">&times;</button>
+      </div>
+      <p style="font-size: 0.9rem; color: var(--text-secondary);">Are you sure you want to end your session?</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-glass" data-close="logoutConfirmModal">Cancel</button>
+        <button type="button" class="btn-danger" id="confirmLogoutBtn">Log Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logged Out Screen -->
+  <div class="logged-out-screen" id="loggedOutScreen">
+    <div class="glass-panel" style="max-width: 390px; width: 100%; text-align: center; padding: 34px;">
+      <div class="stat-icon" style="margin: 0 auto 16px;"><i class='bx bx-lock-open-alt'></i></div>
+      <h2 style="margin-bottom: 8px;">Session Closed</h2>
+      <p style="font-size: 0.86rem; color: var(--text-secondary); margin-bottom: 22px;">You have been safely signed out of MySchool.</p>
+      <button type="button" class="btn-accent" id="logBackInBtn" style="width: 100%; justify-content: center;">
+        <i class='bx bx-log-in'></i> Sign Back In
+      </button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="Home.js">
+
+  </script>
+</body>
+</html>

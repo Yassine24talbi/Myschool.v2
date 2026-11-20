@@ -1,0 +1,204 @@
+MYSCHOOL DATABASE SCHEMA
+=======================
+
+Purpose
+-------
+This schema models the information used by Home.html, Home.js, and Home.css:
+schools and settings, admin profiles, students and exam notes, teachers,
+classes and weekly schedules, subjects, and notifications.
+
+SQL dialect: MySQL 8.0+
+Character set: utf8mb4
+
+RELATIONSHIPS
+-------------
+schools 1---many students, teachers, classes, subjects, and administrators
+students many---many subjects, through student_subjects
+student_subjects 1---many exam_scores (one row per exam)
+teachers many---1 subjects (one primary teaching subject)
+teachers many---many classes, through teacher_classes
+classes 1---many class_schedule entries; each entry may reference one subject
+administrators 1---1 user_preferences
+administrators 1---many notifications
+
+TABLE DEFINITIONS
+-----------------
+
+CREATE TABLE schools (
+  school_id       BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  school_name     VARCHAR(160) NOT NULL DEFAULT 'MySchool',
+  academic_year   VARCHAR(20) NOT NULL,
+  created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (school_id)
+);
+
+CREATE TABLE administrators (
+  admin_id        BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  school_id       BIGINT UNSIGNED NOT NULL,
+  first_name      VARCHAR(80) NOT NULL,
+  last_name       VARCHAR(80) NOT NULL,
+  email           VARCHAR(254) NOT NULL,
+  phone           VARCHAR(32) NOT NULL,
+  password_hash   VARCHAR(255) NOT NULL,
+  role            VARCHAR(32) NOT NULL DEFAULT 'Super Admin',
+  created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (admin_id),
+  UNIQUE KEY uq_administrators_email (email),
+  CONSTRAINT fk_administrators_school FOREIGN KEY (school_id)
+    REFERENCES schools (school_id) ON DELETE CASCADE
+);
+
+CREATE TABLE user_preferences (
+  admin_id        BIGINT UNSIGNED NOT NULL,
+  theme           VARCHAR(16) NOT NULL DEFAULT 'dark',
+  language        VARCHAR(8) NOT NULL DEFAULT 'en',
+  updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (admin_id),
+  CONSTRAINT chk_preferences_theme CHECK (theme IN ('dark', 'light')),
+  CONSTRAINT chk_preferences_language CHECK (language IN ('en', 'fr')),
+  CONSTRAINT fk_preferences_admin FOREIGN KEY (admin_id)
+    REFERENCES administrators (admin_id) ON DELETE CASCADE
+);
+
+CREATE TABLE subjects (
+  subject_id      VARCHAR(16) NOT NULL,       -- Example: SUB-01
+  school_id       BIGINT UNSIGNED NOT NULL,
+  subject_name    VARCHAR(100) NOT NULL,
+  subject_code    VARCHAR(32) NOT NULL,       -- Example: MATH-101
+  created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (subject_id),
+  UNIQUE KEY uq_subject_school_code (school_id, subject_code),
+  UNIQUE KEY uq_subject_school_name (school_id, subject_name),
+  CONSTRAINT fk_subjects_school FOREIGN KEY (school_id)
+    REFERENCES schools (school_id) ON DELETE CASCADE
+);
+
+CREATE TABLE classes (
+  class_id        VARCHAR(16) NOT NULL,       -- Example: CLS-01
+  school_id       BIGINT UNSIGNED NOT NULL,
+  class_name      VARCHAR(100) NOT NULL,      -- Example: Class 11-A
+  grade_level     VARCHAR(40) NOT NULL,       -- Example: Grade 11
+  average_result  DECIMAL(5,2) NULL,          -- Score out of 20 in the current UI
+  created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (class_id),
+  UNIQUE KEY uq_class_school_name (school_id, class_name),
+  CONSTRAINT chk_class_average CHECK (average_result IS NULL OR average_result BETWEEN 0 AND 20),
+  CONSTRAINT fk_classes_school FOREIGN KEY (school_id)
+    REFERENCES schools (school_id) ON DELETE CASCADE
+);
+
+CREATE TABLE students (
+  student_id      VARCHAR(16) NOT NULL,       -- Example: STU-101
+  school_id       BIGINT UNSIGNED NOT NULL,
+  class_id        VARCHAR(16) NOT NULL,
+  full_name       VARCHAR(160) NOT NULL,
+  parent_phone    VARCHAR(32) NOT NULL,
+  status          VARCHAR(20) NOT NULL DEFAULT 'Active',
+  created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (student_id),
+  KEY ix_students_school_class (school_id, class_id),
+  KEY ix_students_name (full_name),
+  CONSTRAINT chk_student_status CHECK (status IN ('Active', 'Inactive', 'On Leave')),
+  CONSTRAINT fk_students_school FOREIGN KEY (school_id)
+    REFERENCES schools (school_id) ON DELETE CASCADE,
+  CONSTRAINT fk_students_class FOREIGN KEY (class_id)
+    REFERENCES classes (class_id) ON DELETE RESTRICT
+);
+
+CREATE TABLE student_subjects (
+  student_id      VARCHAR(16) NOT NULL,
+  subject_id      VARCHAR(16) NOT NULL,
+  enrolled_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (student_id, subject_id),
+  CONSTRAINT fk_student_subjects_student FOREIGN KEY (student_id)
+    REFERENCES students (student_id) ON DELETE CASCADE,
+  CONSTRAINT fk_student_subjects_subject FOREIGN KEY (subject_id)
+    REFERENCES subjects (subject_id) ON DELETE RESTRICT
+);
+
+CREATE TABLE exam_scores (
+  student_id      VARCHAR(16) NOT NULL,
+  subject_id      VARCHAR(16) NOT NULL,
+  exam_number     TINYINT UNSIGNED NOT NULL,  -- 1 or 2, as represented in the UI
+  score           DECIMAL(5,2) NOT NULL,
+  recorded_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (student_id, subject_id, exam_number),
+  CONSTRAINT chk_exam_number CHECK (exam_number IN (1, 2)),
+  CONSTRAINT chk_exam_score CHECK (score BETWEEN 0 AND 20),
+  CONSTRAINT fk_exam_enrollment FOREIGN KEY (student_id, subject_id)
+    REFERENCES student_subjects (student_id, subject_id) ON DELETE CASCADE
+);
+
+CREATE TABLE teachers (
+  teacher_id      VARCHAR(16) NOT NULL,       -- Example: TCH-201
+  school_id       BIGINT UNSIGNED NOT NULL,
+  full_name       VARCHAR(160) NOT NULL,
+  subject_id      VARCHAR(16) NOT NULL,       -- One primary subject per teacher in the UI
+  phone           VARCHAR(32) NOT NULL,
+  status          VARCHAR(20) NOT NULL DEFAULT 'Active',
+  created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (teacher_id),
+  KEY ix_teachers_school_name (school_id, full_name),
+  CONSTRAINT chk_teacher_status CHECK (status IN ('Active', 'Inactive', 'On Leave')),
+  CONSTRAINT fk_teachers_school FOREIGN KEY (school_id)
+    REFERENCES schools (school_id) ON DELETE CASCADE,
+  CONSTRAINT fk_teachers_subject FOREIGN KEY (subject_id)
+    REFERENCES subjects (subject_id) ON DELETE RESTRICT
+);
+
+CREATE TABLE teacher_classes (
+  teacher_id      VARCHAR(16) NOT NULL,
+  class_id        VARCHAR(16) NOT NULL,
+  PRIMARY KEY (teacher_id, class_id),
+  CONSTRAINT fk_teacher_classes_teacher FOREIGN KEY (teacher_id)
+    REFERENCES teachers (teacher_id) ON DELETE CASCADE,
+  CONSTRAINT fk_teacher_classes_class FOREIGN KEY (class_id)
+    REFERENCES classes (class_id) ON DELETE CASCADE
+);
+
+CREATE TABLE class_schedule (
+  class_id        VARCHAR(16) NOT NULL,
+  day_of_week     TINYINT UNSIGNED NOT NULL,  -- 1=Monday ... 6=Saturday
+  period_number   TINYINT UNSIGNED NOT NULL,  -- Four periods per day in the UI
+  subject_id      VARCHAR(16) NOT NULL,
+  PRIMARY KEY (class_id, day_of_week, period_number),
+  CONSTRAINT chk_schedule_day CHECK (day_of_week BETWEEN 1 AND 6),
+  CONSTRAINT chk_schedule_period CHECK (period_number BETWEEN 1 AND 4),
+  CONSTRAINT fk_schedule_class FOREIGN KEY (class_id)
+    REFERENCES classes (class_id) ON DELETE CASCADE,
+  CONSTRAINT fk_schedule_subject FOREIGN KEY (subject_id)
+    REFERENCES subjects (subject_id) ON DELETE RESTRICT
+);
+
+CREATE TABLE notifications (
+  notification_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  admin_id        BIGINT UNSIGNED NOT NULL,
+  title           VARCHAR(160) NOT NULL,
+  message         TEXT NOT NULL,
+  created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  read_at         TIMESTAMP NULL,
+  PRIMARY KEY (notification_id),
+  KEY ix_notifications_admin_created (admin_id, created_at),
+  CONSTRAINT fk_notifications_admin FOREIGN KEY (admin_id)
+    REFERENCES administrators (admin_id) ON DELETE CASCADE
+);
+
+IMPLEMENTATION NOTES
+--------------------
+1. Create one row in schools, then associate its administrator and records with
+   that school's school_id.
+2. The sample UI IDs (STU-101, TCH-201, CLS-01, SUB-01) fit the VARCHAR keys.
+3. Empty timetable cells need no class_schedule row. The UI's six days and four
+   periods are represented by day_of_week and period_number; store period start
+   and end times separately if administrators need to edit them.
+4. The dashboard totals and averages are derived from students, teachers,
+   classes, subjects, and exam_scores; they do not need dedicated tables.
+5. Never store the current or new password from the profile form as plain text.
+   Store only a secure password hash in administrators.password_hash.
+6. The current HTML/JavaScript uses in-memory sample data. Connecting this schema
+   requires a server-side API; browser code should not connect directly to MySQL.
